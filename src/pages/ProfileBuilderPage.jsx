@@ -1,6 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '../lib/api';
+import { AuthContext } from '../context/AuthContext';
 
 const DEFAULT_SKILLS = [
   'React.js', 'Node.js', 'MongoDB', 'TypeScript', 'Express.js', 'Python',
@@ -14,6 +15,7 @@ const STEP_LABELS = [
 ];
 
 function ProfileBuilderPage() {
+  const { user } = useContext(AuthContext);
   const [step, setStep] = useState(0);
 
   // ── Existing state (preserved from original) ──
@@ -127,9 +129,14 @@ function ProfileBuilderPage() {
           }
         }
       })
-      .catch(() => setProfileExists(false))
+      .catch(() => {
+        setProfileExists(false);
+        if (user && user.email && !form.email) {
+          setForm(prev => ({ ...prev, email: user.email }));
+        }
+      })
       .finally(() => setLoading(false));
-  }, []);
+  }, [user]);
 
   // ── Save profile (preserved API calls) ──
   const saveProfile = async () => {
@@ -140,6 +147,7 @@ function ProfileBuilderPage() {
       headline: form.headline,
       bio: form.bio,
       location: form.location,
+      email: form.email,
       portfolioWebsite: form.website || socialLinks.portfolio,
       skills: selectedSkills.map(name => ({ name })),
       experience: experiences.filter(e => e.jobTitle || e.company),
