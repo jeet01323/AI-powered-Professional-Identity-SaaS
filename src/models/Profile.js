@@ -95,6 +95,16 @@ seoDescription: {
     image: String,
   },
 ],
+    // experience
+    experience: [
+      {
+        jobTitle: String,
+        company: String,
+        startDate: String,
+        endDate: String,
+        description: String,
+      },
+    ],
 
     // Social Links
     socialLinks: [

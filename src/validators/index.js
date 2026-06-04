@@ -27,6 +27,7 @@ const createProfileSchema = z.object({
     portfolioWebsite: z.string().max(200).optional(),
     skills: z.array(z.object({ name: z.string() })).optional(),
     projects: z.array(z.any()).optional(),
+    experience: z.array(z.any()).optional(),
     socialLinks: z.array(z.any()).optional(),
   }),
 });
