@@ -162,6 +162,8 @@ theme: {
     "glassmorphism",
     "developer",
     "premium",
+    "light",
+    "neon",
   ],
 
   default: "default",
