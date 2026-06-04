@@ -1,6 +1,7 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useContext } from 'react';
 import toast from 'react-hot-toast';
 import { api } from '../lib/api';
+import { AuthContext } from '../context/AuthContext';
 
 const THEMES = [
   { id: 'light', label: 'Clean Light', gradient: 'linear-gradient(135deg, #f8fafc, #e2e8f0)' },
@@ -43,11 +44,12 @@ function Toggle({ checked, onChange, label }) {
 }
 
 export default function DevCardPremiumSettingsPage() {
+  const { user } = useContext(AuthContext);
   const [activeTab, setActiveTab] = useState('profile');
 
   const [profile, setProfile] = useState({
     displayName: 'DevCard User',
-    email: 'devcard@example.com',
+    email: '',
     theme: 'neon',
     publicProfile: true,
   });
@@ -69,10 +71,11 @@ export default function DevCardPremiumSettingsPage() {
           ...prev,
           displayName: res.displayName || res.username || prev.displayName,
           theme: res.theme || 'neon',
+          email: res.email || user?.email || prev.email,
         }));
       }
     }).catch(console.error);
-  }, []);
+  }, [user]);
 
   const saveTheme = async () => {
     setSavingTheme(true);
