@@ -138,7 +138,7 @@ export default function PortfolioManagerPage() {
     try {
       await api.profile.update({ projects: updatedProjects });
     } catch (err) {
-      alert('Failed to save project: ' + err.message);
+      toast.error('Failed to save project: ' + err.message);
     }
   };
 
@@ -160,7 +160,7 @@ export default function PortfolioManagerPage() {
     try {
       await api.profile.update({ projects: updatedProjects });
     } catch (err) {
-      alert('Failed to remove project: ' + err.message);
+      toast.error('Failed to remove project: ' + err.message);
     }
   };
 

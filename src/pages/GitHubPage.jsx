@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 
 export default function GitHubPage() {
@@ -25,9 +26,9 @@ export default function GitHubPage() {
     try {
       const res = await api.github.connect({ username });
       setGithubData(res.githubData);
-      alert('GitHub connected successfully!');
+      toast.success('GitHub connected successfully!');
     } catch (err) {
-      alert('Failed to connect GitHub: ' + err.message);
+      toast.error('Failed to connect GitHub: ' + err.message);
     } finally {
       setLoading(false);
     }

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 
 export default function SEOPage() {
@@ -112,7 +113,7 @@ export default function SEOPage() {
           <button
             className="btn-primary"
             style={{ fontSize: '.85rem', padding: '.65rem 1.5rem' }}
-            onClick={() => alert('SEO settings saved!')}
+            onClick={() => toast.success('SEO settings saved!')}
           >
             Save SEO Settings
           </button>

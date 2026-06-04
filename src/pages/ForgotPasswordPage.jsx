@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 
 export default function ForgotPasswordPage() {
@@ -18,7 +19,7 @@ export default function ForgotPasswordPage() {
       if (res.resetUrl) {
         setResetUrl(res.resetUrl);
       } else {
-        alert("Check your email for the reset link.");
+        toast.success("Check your email for the reset link.");
       }
     } catch (err) {
       setError(err.message || 'Failed to send reset email');

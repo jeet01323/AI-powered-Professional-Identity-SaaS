@@ -1,4 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 
 const THEMES = [
@@ -77,9 +78,9 @@ export default function DevCardPremiumSettingsPage() {
     setSavingTheme(true);
     try {
       await api.profile.updateTheme({ theme: profile.theme });
-      alert('Appearance saved successfully!');
+      toast.success('Appearance saved successfully!');
     } catch (err) {
-      alert(err.message || 'Failed to save appearance');
+      toast.error(err.message || 'Failed to save appearance');
     } finally {
       setSavingTheme(false);
     }
