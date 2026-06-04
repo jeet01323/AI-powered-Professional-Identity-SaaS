@@ -82,8 +82,9 @@ export default function PublicProfilePage() {
     );
   }
 
-  const profileSkills = profile.skills || profile.techStack || [];
+  const profileSkills = (profile.skills || profile.techStack || []).map(s => typeof s === 'string' ? s : s.name).filter(Boolean);
   const profileProjects = profile.projects || [];
+  const profileExperiences = profile.experience || [];
   const socialLinks = [];
   if (profile.github || profile.githubUrl) socialLinks.push({ icon: '🐙', label: 'GitHub', url: profile.github || profile.githubUrl });
   if (profile.linkedin || profile.linkedinUrl) socialLinks.push({ icon: '💼', label: 'LinkedIn', url: profile.linkedin || profile.linkedinUrl });
@@ -217,6 +218,27 @@ export default function PublicProfilePage() {
                     )}
                   </div>
                 )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Experience */}
+      {profileExperiences.length > 0 && (
+        <div className="profile-section">
+          <h3>Experience</h3>
+          <div className="experience-list">
+            {profileExperiences.map((exp, i) => (
+              <div key={exp._id || i} className="project-card" style={{ marginBottom: '1rem' }}>
+                <h4 style={{ margin: '0 0 .25rem 0' }}>{exp.jobTitle}</h4>
+                <div style={{ color: 'var(--purple)', fontWeight: 600, fontSize: '.9rem', marginBottom: '.5rem' }}>
+                  {exp.company}
+                </div>
+                <div style={{ color: 'var(--muted)', fontSize: '.8rem', marginBottom: '.75rem' }}>
+                  {exp.startDate} — {exp.endDate || 'Present'}
+                </div>
+                <p style={{ margin: 0 }}>{exp.description}</p>
               </div>
             ))}
           </div>
