@@ -8,12 +8,36 @@ export default function GitHubPage() {
   const [githubData, setGithubData] = useState(null);
 
   useEffect(() => {
-    // Attempt to fetch profile to see if github is already connected
     api.profile.getMe()
-      .then(data => {
-        if (data?.githubData?.username) {
-          setGithubData(data.githubData);
-          setUsername(data.githubData.username);
+      .then(async (data) => {
+        let currentUname = data?.githubData?.username || '';
+        
+        // Extract from social links if available
+        const githubLink = data?.socialLinks?.find(link => 
+          link.platform?.toLowerCase() === 'github' || link.url?.includes('github.com')
+        )?.url;
+        
+        if (githubLink) {
+          const parts = githubLink.replace(/\/$/, '').split('/');
+          const extracted = parts[parts.length - 1];
+          if (extracted) currentUname = extracted;
+        }
+
+        if (currentUname) {
+          setUsername(currentUname);
+          if (data?.githubData?.username) {
+            setGithubData(data.githubData);
+          }
+          // Auto-sync real time data
+          setLoading(true);
+          try {
+            const res = await api.github.connect({ username: currentUname });
+            setGithubData(res.githubData);
+          } catch (err) {
+            console.error('Auto-sync failed', err);
+          } finally {
+            setLoading(false);
+          }
         }
       })
       .catch(console.error);
