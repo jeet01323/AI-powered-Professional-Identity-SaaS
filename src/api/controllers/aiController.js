@@ -17,7 +17,7 @@ const generateBio = async (req, res) => {
     // Gemini Model
     const model =
       genAI.getGenerativeModel({
-     model: "gemini-1.5-flash-8b",
+      model: "gemini-1.5-flash",
       });
 
 
@@ -133,7 +133,7 @@ Give response in clean JSON format.
     const model =
       genAI.getGenerativeModel({
         model:
-          "gemini-1.5-flash-8b",
+          "gemini-1.5-flash",
       });
 
 
