@@ -61,7 +61,7 @@ export default function DevDashboardPage() {
 
     return {
       stats: [
-        { label: 'Profile Views', value: analytics.profileViews, hint: 'All time' },
+        { label: 'Profile Views', value: analytics.totalViews || analytics.profileViews || 0, hint: 'All time' },
         { label: 'QR Scans', value: analytics.qrScans, hint: 'All time' },
         { label: 'Resume Downloads', value: analytics.resumeDownloads, hint: 'All time' },
         { label: 'Contact Clicks', value: analytics.contactClicks, hint: 'All time' },
@@ -130,7 +130,7 @@ export default function DevDashboardPage() {
       <div className="metrics-grid">
         <div className="metric-card">
           <div className="label">👁️ Profile Views</div>
-          <div className="value">{analytics.profileViews.toLocaleString()}</div>
+          <div className="value">{(analytics.totalViews || analytics.profileViews || 0).toLocaleString()}</div>
           <div className="change">↑ 12% this week</div>
         </div>
         <div className="metric-card">
