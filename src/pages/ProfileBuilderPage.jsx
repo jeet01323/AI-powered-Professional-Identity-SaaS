@@ -27,6 +27,7 @@ function ProfileBuilderPage() {
     email: '',
     website: '',
     githubUsername: '',
+    profilePhoto: '',
   });
 
   const [loading, setLoading] = useState(true);
@@ -48,6 +49,8 @@ function ProfileBuilderPage() {
 
   const [resumeFile, setResumeFile] = useState(null);
   const resumeInputRef = useRef(null);
+  const photoInputRef = useRef(null);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const [socialLinks, setSocialLinks] = useState({
     github: '', linkedin: '', twitter: '', portfolio: '',
@@ -90,6 +93,7 @@ function ProfileBuilderPage() {
             email: data.email || '',
             website: data.portfolioWebsite || '',
             githubUsername: data.githubData?.username || '',
+            profilePhoto: data.profilePhoto || '',
           }));
           if (data.skills && Array.isArray(data.skills)) {
             const parsedSkills = data.skills
@@ -183,6 +187,29 @@ function ProfileBuilderPage() {
     if (file) setResumeFile(file);
   };
 
+  const handlePhotoUpload = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (!profileExists) {
+      alert("Please enter a username and click Next to save your profile first before uploading a photo.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    setUploadingPhoto(true);
+    try {
+      const res = await api.upload.profilePhoto(formData);
+      setForm(prev => ({ ...prev, profilePhoto: res.profilePhoto }));
+    } catch (err) {
+      alert(err.message || 'Failed to upload photo');
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
   // ── Copy URL ──
   const profileUrl = `devcard.ai/${form.username || 'username'}`;
   const copyUrl = () => {
@@ -253,10 +280,31 @@ function ProfileBuilderPage() {
               background: 'linear-gradient(135deg,var(--purple),var(--blue))',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
               fontSize: '2rem', flexShrink: 0,
-            }}>👩‍💻</div>
+              overflow: 'hidden',
+            }}>
+              {form.profilePhoto ? (
+                <img src={form.profilePhoto} alt="Profile" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              ) : (
+                '👩‍💻'
+              )}
+            </div>
             <div>
-              <button className="btn-outline" style={{ fontSize: '.8rem', padding: '.4rem .9rem' }}>Upload Photo</button>
+              <button 
+                className="btn-outline" 
+                style={{ fontSize: '.8rem', padding: '.4rem .9rem' }}
+                onClick={() => photoInputRef.current?.click()}
+                disabled={uploadingPhoto}
+              >
+                {uploadingPhoto ? 'Uploading...' : 'Upload Photo'}
+              </button>
               <p style={{ fontSize: '.75rem', color: 'var(--muted)', marginTop: '.4rem' }}>PNG, JPG up to 5MB</p>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/png, image/jpeg, image/jpg"
+                style={{ display: 'none' }}
+                onChange={handlePhotoUpload}
+              />
             </div>
           </div>
 
