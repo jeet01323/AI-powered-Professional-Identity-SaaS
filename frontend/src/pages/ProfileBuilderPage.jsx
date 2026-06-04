@@ -56,6 +56,10 @@ function ProfileBuilderPage() {
   const [selectedTheme, setSelectedTheme] = useState('dark-pro');
   const [copied, setCopied] = useState(false);
 
+  // ── QR Code state ──
+  const [qrCodeData, setQrCodeData] = useState(null);
+  const [generatingQr, setGeneratingQr] = useState(false);
+
   // ── Debounced username check (preserved) ──
   useEffect(() => {
     if (!form.username) { setUsernameStatus(''); return; }
@@ -590,8 +594,35 @@ function ProfileBuilderPage() {
               }}>
                 🚀 View My Profile
               </button>
-              <button className="btn-outline">📱 Get QR Code</button>
+              <button className="btn-outline" disabled={generatingQr} onClick={async () => {
+                if (!form.username) {
+                  alert("Please go to Step 1, enter a username, and click Next to save your profile first!");
+                  setStep(0);
+                  return;
+                }
+                try {
+                  setGeneratingQr(true);
+                  const res = await api.qr.get(form.username);
+                  setQrCodeData(res.qrCode);
+                } catch (e) {
+                  alert(e.message || "Failed to generate QR code");
+                } finally {
+                  setGeneratingQr(false);
+                }
+              }}>
+                {generatingQr ? 'Generating...' : '📱 Get QR Code'}
+              </button>
             </div>
+
+            {qrCodeData && (
+              <div style={{ marginTop: '1.5rem' }}>
+                <p style={{ marginBottom: '.5rem', fontWeight: 600 }}>Your QR Code</p>
+                <img src={qrCodeData} alt="Profile QR Code" style={{ borderRadius: '.5rem', border: '2px solid var(--border)', maxWidth: '200px', display: 'block', margin: '0 auto' }} />
+                <div style={{ marginTop: '.75rem' }}>
+                  <a href={qrCodeData} download={`${form.username}-qr.png`} style={{ color: 'var(--purple)', fontSize: '.85rem', textDecoration: 'none', fontWeight: 600 }}>↓ Download Image</a>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
