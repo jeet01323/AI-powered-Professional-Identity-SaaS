@@ -53,7 +53,10 @@ const generalLimiter = rateLimit({
   message: { message: "Too many requests from this IP, please try again after 15 minutes" },
 });
 
-app.use(helmet());
+app.use(helmet({
+  crossOriginResourcePolicy: false,
+  xFrameOptions: false,
+}));
 app.use(compression());
 
 const allowedOrigins = [
