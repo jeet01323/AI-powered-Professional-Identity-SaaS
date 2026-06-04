@@ -34,7 +34,6 @@ export default function GitHubPage() {
     }
   };
 
-  // Compute stats from githubData or use mock values
   const repos = githubData?.repositories || [];
   const totalStars = repos.reduce((sum, r) => sum + (r.stars || 0), 0);
   const totalForks = repos.reduce((sum, r) => sum + (r.forks || 0), 0);
@@ -42,18 +41,18 @@ export default function GitHubPage() {
   const repoCount = githubData?.publicRepos ?? repos.length;
 
   // Top repositories sorted by stars
-  const topRepos = [...repos].sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 5);
-
-  // Mock top repos if none available
-  const displayRepos = topRepos.length > 0 ? topRepos : [
-    { name: 'devcard-ai-frontend', language: 'React · TypeScript', stars: 87, forks: 23 },
-    { name: 'node-auth-starter', language: 'Node.js · Express', stars: 64, forks: 18 },
-    { name: 'ml-portfolio-classifier', language: 'Python · TensorFlow', stars: 51, forks: 12 },
-  ];
+  const displayRepos = [...repos].sort((a, b) => (b.stars || 0) - (a.stars || 0)).slice(0, 5);
 
   return (
     <div>
-      <h2 style={{ marginBottom: '1.5rem' }}>GitHub Integration</h2>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+        <h2 style={{ margin: 0 }}>GitHub Integration</h2>
+        {githubData && (
+          <button className="btn-outline" onClick={handleConnect} disabled={loading} style={{ fontSize: '.8rem', padding: '.4rem .8rem' }}>
+            {loading ? 'Syncing...' : '🔄 Sync Real-Time Data'}
+          </button>
+        )}
+      </div>
 
       {!githubData && (
         <div className="panel" style={{ marginBottom: '1.5rem' }}>
@@ -76,19 +75,19 @@ export default function GitHubPage() {
       <div className="metrics-grid" style={{ marginBottom: '1.5rem' }}>
         <div className="metric-card">
           <div className="label">📦 Repositories</div>
-          <div className="value">{repoCount || 48}</div>
+          <div className="value">{githubData ? repoCount : 48}</div>
         </div>
         <div className="metric-card">
           <div className="label">⭐ Total Stars</div>
-          <div className="value">{totalStars || 312}</div>
+          <div className="value">{githubData ? totalStars : 312}</div>
         </div>
         <div className="metric-card">
           <div className="label">🔀 Forks</div>
-          <div className="value">{totalForks || 94}</div>
+          <div className="value">{githubData ? totalForks : 94}</div>
         </div>
         <div className="metric-card">
           <div className="label">👥 Followers</div>
-          <div className="value">{followers || 156}</div>
+          <div className="value">{githubData ? followers : 156}</div>
         </div>
       </div>
 
@@ -124,6 +123,16 @@ export default function GitHubPage() {
               </div>
             </div>
           ))}
+          {githubData && displayRepos.length === 0 && (
+            <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--muted)', fontSize: '.85rem' }}>
+              No public repositories found.
+            </div>
+          )}
+          {!githubData && (
+            <div style={{ padding: '1rem', textAlign: 'center', color: 'var(--muted)', fontSize: '.85rem' }}>
+              Connect your account to see your top repositories.
+            </div>
+          )}
         </div>
       </div>
     </div>

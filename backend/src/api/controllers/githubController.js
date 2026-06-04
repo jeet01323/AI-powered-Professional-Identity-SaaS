@@ -35,6 +35,8 @@ const connectGitHub = async (req, res) => {
 
         stars: repo.stargazers_count,
 
+        forks: repo.forks_count,
+
         repoUrl: repo.html_url,
       }));
 
@@ -63,6 +65,8 @@ const connectGitHub = async (req, res) => {
       followers: userResponse.data.followers,
 
       following: userResponse.data.following,
+
+      publicRepos: userResponse.data.public_repos,
 
       repositories,
     };

@@ -135,6 +135,8 @@ seoDescription: {
 
   following: Number,
 
+  publicRepos: Number,
+
   repositories: [
     {
       name: String,
@@ -144,6 +146,8 @@ seoDescription: {
       language: String,
 
       stars: Number,
+
+      forks: Number,
 
       repoUrl: String,
     },
