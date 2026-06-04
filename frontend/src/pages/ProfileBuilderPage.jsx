@@ -580,7 +580,14 @@ function ProfileBuilderPage() {
             </div>
 
             <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-              <button className="btn-primary" onClick={() => window.open(`/${form.username || ''}`, '_blank')}>
+              <button className="btn-primary" onClick={() => {
+                if (!form.username) {
+                  alert("Please go to Step 1, enter a username, and click Next to save your profile first!");
+                  setStep(0);
+                } else {
+                  window.open(`/${form.username}`, '_blank');
+                }
+              }}>
                 🚀 View My Profile
               </button>
               <button className="btn-outline">📱 Get QR Code</button>
