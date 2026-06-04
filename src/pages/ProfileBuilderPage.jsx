@@ -229,8 +229,8 @@ function ProfileBuilderPage() {
 
   // ── Step navigation ──
   const goNext = async () => {
-    // Save to backend on step 0 (personal info)
-    if (step === 0) {
+    // Save to backend on data entry steps (0=Info, 1=Skills, 2=Exp, 3=Projects, 5=Socials)
+    if ([0, 1, 2, 3, 5].includes(step)) {
       const ok = await saveProfile();
       if (!ok) return;
     }
