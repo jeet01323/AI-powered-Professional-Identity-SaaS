@@ -35,6 +35,7 @@ function ProfileBuilderPage() {
   const [saving, setSaving] = useState(false);
   const [profileExists, setProfileExists] = useState(false);
   const [usernameStatus, setUsernameStatus] = useState('');
+  const [originalUsername, setOriginalUsername] = useState('');
 
   // ── New local-only state for steps without backend support ──
   const [selectedSkills, setSelectedSkills] = useState([]);
@@ -67,6 +68,10 @@ function ProfileBuilderPage() {
   // ── Debounced username check (preserved) ──
   useEffect(() => {
     if (!form.username) { setUsernameStatus(''); return; }
+    if (originalUsername && form.username === originalUsername) {
+      setUsernameStatus('available');
+      return;
+    }
     const timer = setTimeout(async () => {
       try {
         const res = await api.profile.checkUsername(form.username);
@@ -74,7 +79,7 @@ function ProfileBuilderPage() {
       } catch { /* ignore */ }
     }, 500);
     return () => clearTimeout(timer);
-  }, [form.username]);
+  }, [form.username, originalUsername]);
 
   // ── Fetch existing profile (preserved) ──
   useEffect(() => {
@@ -82,6 +87,7 @@ function ProfileBuilderPage() {
       .then(data => {
         if (data) {
           setProfileExists(true);
+          setOriginalUsername(data.username || '');
           setForm(prev => ({
             ...prev,
             username: data.username || '',
