@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
+import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 
 const TOOL_CONFIGS = [
@@ -103,10 +104,33 @@ export default function AIStudioPage() {
           
           <div className="chat-messages">
             {messages.map((msg, i) => (
-              <div key={i} className={`msg ${msg.role}`}>
+              <div key={i} className={`msg ${msg.role}`} style={{ position: 'relative' }}>
                 {msg.text.split('\n').map((line, j) => (
                   <span key={j}>{line}<br/></span>
                 ))}
+                {msg.role === 'ai' && msg.text && (
+                  <button
+                    onClick={() => {
+                      navigator.clipboard.writeText(msg.text);
+                      toast.success('Copied to clipboard!');
+                    }}
+                    style={{
+                      position: 'absolute',
+                      top: '0.5rem',
+                      right: '0.5rem',
+                      background: 'rgba(255, 255, 255, 0.1)',
+                      border: 'none',
+                      borderRadius: '0.25rem',
+                      color: '#fff',
+                      cursor: 'pointer',
+                      padding: '0.2rem 0.5rem',
+                      fontSize: '0.75rem',
+                    }}
+                    title="Copy text"
+                  >
+                    📋 Copy
+                  </button>
+                )}
               </div>
             ))}
             {loading && (
