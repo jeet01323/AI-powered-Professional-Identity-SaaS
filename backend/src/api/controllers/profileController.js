@@ -101,6 +101,7 @@ const updateProfile = async (req, res) => {
       "projects",
       "socialLinks",
       "portfolioWebsite",
+      "experience",
     ];
 
     const updates = {};

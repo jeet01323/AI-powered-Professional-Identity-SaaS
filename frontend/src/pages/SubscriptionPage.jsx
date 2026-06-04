@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from 'react';
 import { api } from '../lib/api';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import toast from 'react-hot-toast';
 
 export default function SubscriptionPage() {
   const { user, updateUser } = useContext(AuthContext);
@@ -50,7 +51,7 @@ export default function SubscriptionPage() {
 
             if (verifyRes.success) {
               updateUser({ isPremium: true, premiumPlan: 'premium' });
-              alert('Successfully upgraded to Pro!');
+              toast.success('Successfully upgraded to Pro!');
             }
           } catch (err) {
             setError(err.message || 'Payment verification failed');
@@ -79,7 +80,7 @@ export default function SubscriptionPage() {
   };
 
   const handleContactSales = () => {
-    alert('Our sales team will reach out to you soon! For immediate assistance, email us at sales@devcard.ai');
+    toast.success('Our sales team will reach out to you soon! For immediate assistance, email us at sales@devcard.ai');
   };
 
   const isPro = user?.isPremium;

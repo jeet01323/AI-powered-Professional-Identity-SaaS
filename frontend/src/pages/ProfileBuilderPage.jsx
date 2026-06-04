@@ -41,9 +41,9 @@ function ProfileBuilderPage() {
   const [selectedSkills, setSelectedSkills] = useState([]);
   const [customSkill, setCustomSkill] = useState('');
 
-  const [experience, setExperience] = useState({
-    jobTitle: '', company: '', startDate: '', endDate: '', description: '',
-  });
+  const [experiences, setExperiences] = useState([
+    { jobTitle: '', company: '', startDate: '', endDate: '', description: '' }
+  ]);
 
   const [projects, setProjects] = useState([
     { name: '', description: '', liveUrl: '', githubUrl: '', techStack: '' },
@@ -122,6 +122,9 @@ function ProfileBuilderPage() {
           if (data.projects && data.projects.length) {
             setProjects(data.projects);
           }
+          if (data.experience && data.experience.length) {
+            setExperiences(data.experience);
+          }
         }
       })
       .catch(() => setProfileExists(false))
@@ -139,6 +142,7 @@ function ProfileBuilderPage() {
       location: form.location,
       portfolioWebsite: form.website || socialLinks.portfolio,
       skills: selectedSkills.map(name => ({ name })),
+      experience: experiences.filter(e => e.jobTitle || e.company),
       projects: projects.filter(p => p.name || p.title).map(p => ({ title: p.name || p.title, description: p.description, liveLink: p.liveUrl, githubLink: p.githubUrl, techStack: typeof p.techStack === 'string' ? p.techStack.split(',').map(s => s.trim()) : p.techStack })),
       socialLinks: [
         { platform: 'github', url: socialLinks.github },
@@ -177,6 +181,14 @@ function ProfileBuilderPage() {
       setSelectedSkills(prev => [...prev, s]);
       setCustomSkill('');
     }
+  };
+
+  // ── Experience helpers ──
+  const updateExperience = (idx, field, value) => {
+    setExperiences(prev => prev.map((e, i) => i === idx ? { ...e, [field]: value } : e));
+  };
+  const addExperience = () => {
+    setExperiences(prev => [...prev, { jobTitle: '', company: '', startDate: '', endDate: '', description: '' }]);
   };
 
   // ── Project helpers ──
@@ -426,32 +438,40 @@ function ProfileBuilderPage() {
         <div className={`form-step${step === 2 ? ' active' : ''}`}>
           <h3 style={{ marginBottom: '1.25rem' }}>Experience</h3>
 
-          <div className="form-group">
-            <label>Job Title</label>
-            <input value={experience.jobTitle} onChange={(e) => setExperience(prev => ({ ...prev, jobTitle: e.target.value }))} />
-          </div>
-          <div className="form-group">
-            <label>Company</label>
-            <input value={experience.company} onChange={(e) => setExperience(prev => ({ ...prev, company: e.target.value }))} />
-          </div>
-          <div className="form-row">
-            <div className="form-group">
-              <label>Start Date</label>
-              <input type="month" value={experience.startDate} onChange={(e) => setExperience(prev => ({ ...prev, startDate: e.target.value }))} />
+          {experiences.map((exp, idx) => (
+            <div key={idx} style={{ marginBottom: idx < experiences.length - 1 ? '1.5rem' : '0', paddingBottom: idx < experiences.length - 1 ? '1.5rem' : '0', borderBottom: idx < experiences.length - 1 ? '1px solid var(--border)' : 'none' }}>
+              <div className="form-group">
+                <label>Job Title</label>
+                <input value={exp.jobTitle} onChange={(e) => updateExperience(idx, 'jobTitle', e.target.value)} />
+              </div>
+              <div className="form-group">
+                <label>Company</label>
+                <input value={exp.company} onChange={(e) => updateExperience(idx, 'company', e.target.value)} />
+              </div>
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Start Date</label>
+                  <input type="month" value={exp.startDate} onChange={(e) => updateExperience(idx, 'startDate', e.target.value)} />
+                </div>
+                <div className="form-group">
+                  <label>End Date</label>
+                  <input type="month" value={exp.endDate} onChange={(e) => updateExperience(idx, 'endDate', e.target.value)} placeholder="Present" />
+                </div>
+              </div>
+              <div className="form-group">
+                <label>Description</label>
+                <textarea
+                  value={exp.description}
+                  onChange={(e) => updateExperience(idx, 'description', e.target.value)}
+                  placeholder="Describe your role and achievements..."
+                />
+              </div>
             </div>
-            <div className="form-group">
-              <label>End Date</label>
-              <input type="month" value={experience.endDate} onChange={(e) => setExperience(prev => ({ ...prev, endDate: e.target.value }))} placeholder="Present" />
-            </div>
-          </div>
-          <div className="form-group">
-            <label>Description</label>
-            <textarea
-              value={experience.description}
-              onChange={(e) => setExperience(prev => ({ ...prev, description: e.target.value }))}
-              placeholder="Describe your role and achievements..."
-            />
-          </div>
+          ))}
+
+          <button className="btn-outline" style={{ fontSize: '.85rem', padding: '.5rem 1rem', marginBottom: '1rem', marginTop: '1rem' }} onClick={addExperience}>
+            + Add Another Role
+          </button>
 
           <div className="step-nav">
             <button className="btn-outline" onClick={goBack}>← Back</button>
