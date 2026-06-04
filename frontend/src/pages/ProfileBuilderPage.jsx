@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 
 const DEFAULT_SKILLS = [
@@ -148,7 +149,7 @@ function ProfileBuilderPage() {
       }
       return true;
     } catch (err) {
-      alert(err.message || 'Failed to save profile');
+      toast.error(err.message || 'Failed to save profile');
       return false;
     } finally {
       setSaving(false);
@@ -192,7 +193,7 @@ function ProfileBuilderPage() {
     if (!file) return;
 
     if (!profileExists) {
-      alert("Please enter a username and click Next to save your profile first before uploading a photo.");
+      toast.error("Please enter a username and click Next to save your profile first before uploading a photo.");
       return;
     }
 
@@ -203,8 +204,9 @@ function ProfileBuilderPage() {
     try {
       const res = await api.upload.profilePhoto(formData);
       setForm(prev => ({ ...prev, profilePhoto: res.profilePhoto }));
+      toast.success('Photo uploaded successfully');
     } catch (err) {
-      alert(err.message || 'Failed to upload photo');
+      toast.error(err.message || 'Failed to upload photo');
     } finally {
       setUploadingPhoto(false);
     }
@@ -634,7 +636,7 @@ function ProfileBuilderPage() {
             <div style={{ display: 'flex', gap: '.75rem', justifyContent: 'center', flexWrap: 'wrap' }}>
               <button className="btn-primary" onClick={() => {
                 if (!form.username) {
-                  alert("Please go to Step 1, enter a username, and click Next to save your profile first!");
+                  toast.error("Please go to Step 1, enter a username, and click Next to save your profile first!");
                   setStep(0);
                 } else {
                   window.open(`/${form.username}`, '_blank');
@@ -644,7 +646,7 @@ function ProfileBuilderPage() {
               </button>
               <button className="btn-outline" disabled={generatingQr} onClick={async () => {
                 if (!form.username) {
-                  alert("Please go to Step 1, enter a username, and click Next to save your profile first!");
+                  toast.error("Please go to Step 1, enter a username, and click Next to save your profile first!");
                   setStep(0);
                   return;
                 }
@@ -652,8 +654,9 @@ function ProfileBuilderPage() {
                   setGeneratingQr(true);
                   const res = await api.qr.get(form.username);
                   setQrCodeData(res.qrCode);
+                  toast.success('QR Code generated!');
                 } catch (e) {
-                  alert(e.message || "Failed to generate QR code");
+                  toast.error(e.message || "Failed to generate QR code");
                 } finally {
                   setGeneratingQr(false);
                 }

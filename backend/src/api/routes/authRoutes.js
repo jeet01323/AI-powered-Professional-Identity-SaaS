@@ -5,17 +5,20 @@ const router = express.Router();
 const {
   registerUser,
   loginUser,
+  getUser,
   forgotPassword,
   resetPassword,
 } = require("../controllers/authController");
 
+const validateRequest = require("../../middleware/validateRequest");
+const { registerSchema, loginSchema } = require("../../validators");
 
 // Register
-router.post("/register", registerUser);
+router.post("/register", validateRequest(registerSchema), registerUser);
 
 
 // Login
-router.post("/login", loginUser);
+router.post("/login", validateRequest(loginSchema), loginUser);
 
 // Forgot Password
 router.post("/forgot-password", forgotPassword);

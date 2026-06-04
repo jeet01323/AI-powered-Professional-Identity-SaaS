@@ -1,4 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
+import { Toaster } from 'react-hot-toast';
 import SidebarLayout from './SidebarLayout';
 import DevCardLanding from './landing/DevCardLanding';
 
@@ -103,9 +104,9 @@ export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
+        <Toaster position="top-right" />
         <AppRoutes />
       </BrowserRouter>
     </AuthProvider>
   );
-
 }

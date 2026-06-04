@@ -45,6 +45,13 @@ const app = express();
 
 // MIDDLEWARE
 const { authLimiter, aiLimiter } = require("./middleware/rateLimiter");
+const rateLimit = require("express-rate-limit");
+
+const generalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // Limit each IP to 100 requests per `window`
+  message: { message: "Too many requests from this IP, please try again after 15 minutes" },
+});
 
 app.use(helmet());
 app.use(compression());
@@ -98,21 +105,21 @@ app.use(
 // API ROUTES
 app.use("/api/auth", authLimiter, authRoutes);
 
-app.use("/api/profile", profileRoutes);
+app.use("/api/profile", generalLimiter, profileRoutes);
 
-app.use("/api/upload", uploadRoutes);
+app.use("/api/upload", generalLimiter, uploadRoutes);
 
 app.use("/api/ai", aiLimiter, aiRoutes);
 
-app.use("/api/github", githubRoutes);
+app.use("/api/github", generalLimiter, githubRoutes);
 
-app.use("/api/qr", qrRoutes);
+app.use("/api/qr", generalLimiter, qrRoutes);
 
-app.use("/api/analytics", analyticsRoutes);
+app.use("/api/analytics", generalLimiter, analyticsRoutes);
 
-app.use("/api/payment", paymentRoutes);
+app.use("/api/payment", generalLimiter, paymentRoutes);
 
-app.use("/api/contact", contactRoutes);
+app.use("/api/contact", generalLimiter, contactRoutes);
 
 app.use("/api/admin", adminRoutes);
 
