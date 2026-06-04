@@ -9,8 +9,12 @@ const {
   getMyContacts,
 } = require("../controllers/contactController");
 
+const validateRequest = require("../../middleware/validateRequest");
+const { contactSchema } = require("../../validators");
+
 router.post(
   "/",
+  validateRequest(contactSchema),
   sendMessage
 );
 

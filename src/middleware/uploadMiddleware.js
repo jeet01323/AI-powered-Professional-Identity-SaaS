@@ -50,10 +50,12 @@ const uploadProfileImage = multer({
   storage: profileStorage,
   limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
   fileFilter: (req, file, cb) => {
-    if (file.mimetype && file.mimetype.startsWith("image/")) {
+    const ext = path.extname(file.originalname).toLowerCase();
+    const allowedExts = ['.jpg', '.jpeg', '.png', '.webp', '.gif'];
+    if (file.mimetype && file.mimetype.startsWith("image/") && allowedExts.includes(ext)) {
       cb(null, true);
     } else {
-      cb(new Error("Only image uploads are allowed for profile images"), false);
+      cb(new Error("Only image uploads (jpg, png, webp, gif) are allowed for profile images"), false);
     }
   },
 });

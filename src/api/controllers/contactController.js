@@ -75,11 +75,14 @@ const getMyContacts = async (
 ) => {
   try {
 
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+
     const profile =
       await Profile.findOne({
         userId: req.user.id,
       });
-
 
     if (!profile) {
       return res.status(404).json({
@@ -87,18 +90,19 @@ const getMyContacts = async (
       });
     }
 
-
-    // FIND CONTACTS
+    // FIND CONTACTS WITH PAGINATION
+    const total = await Contact.countDocuments({ profileId: profile._id });
     const contacts =
       await Contact.find({
         profileId:
           profile._id,
       }).sort({
         createdAt: -1,
-      });
+      })
+      .skip(skip)
+      .limit(limit);
 
-
-    res.json(contacts);
+    res.json({ contacts, page, limit, total });
 
   } catch (error) {
 

@@ -27,10 +27,14 @@ const {
   "../controllers/profileController"
 );
 
+const validateRequest = require("../../middleware/validateRequest");
+const { createProfileSchema, updateProfileSchema } = require("../../validators");
+
 // Create Profile
 router.post(
   "/create",
   protect,
+  validateRequest(createProfileSchema),
   createProfile
 );
 
@@ -47,6 +51,7 @@ router.get(
 router.put(
   "/update",
   protect,
+  validateRequest(updateProfileSchema),
   updateProfile
 );
 
