@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import toast from 'react-hot-toast';
 import { api, getImageUrl } from '../lib/api';
 
 export default function PublicProfilePage() {
@@ -42,14 +43,15 @@ export default function PublicProfilePage() {
       setEmail('');
       setMessage('');
 
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => setContactStatus(''), 5000);
+
+      toast.success('Message sent successfully!');
 
       // Track contact click
       api.analytics.track({ profileId: profile._id, eventType: 'contact_click' }).catch(console.error);
     } catch (err) {
       setContactStatus('error');
-      alert(err.message || 'Failed to send message');
+      toast.error(err.message || 'Failed to send message');
     }
   };
 

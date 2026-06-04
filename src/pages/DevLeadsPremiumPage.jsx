@@ -104,7 +104,8 @@ export default function DevLeadsPremiumPage() {
   useEffect(() => {
     api.contact.getMessages()
       .then(res => {
-        setLeads(res.map(c => ({
+        const data = res.contacts || res; // Fallback just in case
+        setLeads(data.map(c => ({
           id: c._id,
           name: c.name,
           email: c.email,
