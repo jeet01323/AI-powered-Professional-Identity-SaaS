@@ -28,7 +28,7 @@ export default function PublicProfilePage() {
         // Track view
         api.analytics.track({ profileId: res._id, eventType: 'view' }).catch(console.error);
       })
-      .catch(err => setError(err.message || 'Profile not found'))
+      .catch(err => setError('No user found'))
       .finally(() => setLoading(false));
   }, [username]);
 
@@ -74,7 +74,7 @@ export default function PublicProfilePage() {
       <div style={{ display: 'grid', placeItems: 'center', height: '100vh' }}>
         <div style={{ textAlign: 'center' }}>
           <div style={{ fontSize: '2rem', marginBottom: '1rem' }}>😕</div>
-          <div style={{ color: 'var(--muted)', fontSize: '.9rem' }}>{error || 'Profile not found'}</div>
+          <div style={{ color: 'var(--muted)', fontSize: '.9rem' }}>No user found</div>
         </div>
       </div>
     );
