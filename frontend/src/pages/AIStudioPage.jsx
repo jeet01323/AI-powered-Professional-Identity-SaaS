@@ -54,10 +54,10 @@ export default function AIStudioPage() {
     setLoading(true);
 
     try {
-      if (activeTool.key === 'bio' && text.toLowerCase().includes('generate')) {
+      if (activeTool.key === 'bio') {
         const res = await api.ai.generateBio({ role: 'Developer', skills: '', experience: text });
         await simulateTyping("Here is a premium bio for you:\n\n" + (res.bio || 'No bio generated.'));
-      } else if (activeTool.key === 'review' && text.toLowerCase().includes('review')) {
+      } else if (activeTool.key === 'review') {
         const res = await api.ai.reviewPortfolio();
         await simulateTyping("Here is my review:\n\n" + (res.review || 'No review generated.'));
       } else {
