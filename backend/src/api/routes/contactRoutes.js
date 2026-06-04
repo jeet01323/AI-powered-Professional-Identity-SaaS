@@ -5,19 +5,19 @@ const router = express.Router();
 const protect = require("../../middleware/authMiddleware");
 
 const {
-  submitContactMessage,
-  getMyContactMessages,
+  sendMessage,
+  getMyContacts,
 } = require("../controllers/contactController");
 
 router.post(
   "/",
-  submitContactMessage
+  sendMessage
 );
 
 router.get(
   "/my",
   protect,
-  getMyContactMessages
+  getMyContacts
 );
 
 module.exports = router;
