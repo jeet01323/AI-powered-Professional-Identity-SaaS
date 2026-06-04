@@ -1,5 +1,6 @@
 import { useCallback, useMemo, useRef, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import toast from 'react-hot-toast';
 import { api } from '../lib/api';
 
 function formatBytes(bytes) {
@@ -91,7 +92,7 @@ export default function ResumeManagerPage() {
 
     try {
       const formData = new FormData();
-      formData.append('resume', file);
+      formData.append('file', file);
       
       const res = await api.upload.resume(formData);
       setUploadProgress(100);
@@ -99,7 +100,7 @@ export default function ResumeManagerPage() {
         setPreviewUrl(res.resumeUrl);
       }
     } catch (err) {
-      alert(err.message || 'Upload failed');
+      toast.error(err.message || 'Upload failed');
     } finally {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
       timeoutRef.current = setTimeout(() => {
@@ -115,7 +116,7 @@ export default function ResumeManagerPage() {
     (file) => {
       const result = validateFile(file);
       if (!result.ok) {
-        alert(result.reason);
+        toast.error(result.reason);
         return;
       }
 

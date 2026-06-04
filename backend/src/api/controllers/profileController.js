@@ -97,6 +97,10 @@ const updateProfile = async (req, res) => {
       "links",
       "social",
       "username",
+      "skills",
+      "projects",
+      "socialLinks",
+      "portfolioWebsite",
     ];
 
     const updates = {};
