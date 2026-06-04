@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { GitHubCalendar } from 'react-github-calendar';
 import { api } from '../lib/api';
 import { AuthContext } from '../context/AuthContext';
 
@@ -72,20 +73,7 @@ export default function DevDashboardPage() {
     };
   }, [analytics, profile]);
 
-  // Generate heatmap cells (random, like the HTML reference does)
-  const heatmapCells = useMemo(() => {
-    const cells = [];
-    for (let i = 0; i < 364; i++) {
-      const r = Math.random();
-      let level = '';
-      if (r > 0.9) level = 'l4';
-      else if (r > 0.75) level = 'l3';
-      else if (r > 0.55) level = 'l2';
-      else if (r > 0.35) level = 'l1';
-      cells.push(level);
-    }
-    return cells;
-  }, []);
+
 
   const userName = user?.name || profile?.displayName || 'Developer';
   const profileScore = data.score;
@@ -181,16 +169,29 @@ export default function DevDashboardPage() {
       </div>
 
       {/* GitHub Activity Heatmap */}
-      <div className="panel" style={{ marginTop: '1rem' }}>
+      <div className="panel" style={{ marginTop: '1rem', overflowX: 'auto' }}>
         <h4>🐙 GitHub Activity</h4>
-        <p style={{ fontSize: '.8rem', color: 'var(--muted)', marginBottom: '.5rem' }}>
-          482 contributions in the last year
-        </p>
-        <div className="heatmap">
-          {heatmapCells.map((level, i) => (
-            <div key={i} className={`heatmap-cell${level ? ' ' + level : ''}`} />
-          ))}
-        </div>
+        {profile?.githubData?.username ? (
+          <div style={{ marginTop: '1rem', color: '#F8FAFC', minWidth: '700px' }}>
+            <GitHubCalendar 
+              username={profile.githubData.username} 
+              colorScheme="dark"
+              theme={{
+                light: ['#ebedf0', '#9be9a8', '#40c463', '#30a14e', '#216e39'],
+                dark: ['rgba(108,99,255,0.1)', 'rgba(108,99,255,0.4)', 'rgba(108,99,255,0.6)', 'rgba(108,99,255,0.8)', '#6C63FF'],
+              }}
+            />
+          </div>
+        ) : (
+          <div style={{ marginTop: '1rem' }}>
+            <p style={{ fontSize: '.85rem', color: 'var(--muted)', marginBottom: '.75rem' }}>
+              Connect your GitHub account to see your real-time activity heatmap!
+            </p>
+            <button className="btn-outline" onClick={() => navigate('/app/github')} style={{ fontSize: '.8rem', padding: '.5rem 1rem' }}>
+              Connect GitHub 🐙
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
