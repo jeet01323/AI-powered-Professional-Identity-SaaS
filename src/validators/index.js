@@ -24,6 +24,7 @@ const createProfileSchema = z.object({
     headline: z.string().max(100).optional(),
     bio: z.string().max(2000).optional(),
     location: z.string().max(100).optional(),
+    email: z.string().email().or(z.literal("")).optional(),
     portfolioWebsite: z.string().max(200).optional(),
     skills: z.array(z.object({ name: z.string() })).optional(),
     projects: z.array(z.any()).optional(),

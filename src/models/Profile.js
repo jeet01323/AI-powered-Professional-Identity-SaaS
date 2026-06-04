@@ -34,6 +34,10 @@ const profileSchema = new mongoose.Schema(
       type: String,
     },
 
+    email: {
+      type: String,
+    },
+
     // Headline
 headline: {
   type: String,

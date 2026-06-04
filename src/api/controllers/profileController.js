@@ -94,6 +94,7 @@ const updateProfile = async (req, res) => {
       "designation",
       "bio",
       "location",
+      "email",
       "links",
       "social",
       "username",
