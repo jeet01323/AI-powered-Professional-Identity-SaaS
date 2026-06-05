@@ -14,41 +14,55 @@ export default function AnalyticsPage() {
       .finally(() => setLoading(false));
   }, []);
 
-  // Bar chart data (last 7 days) — from HTML reference
+  // Dynamic Bar chart data (last 7 days)
   const barData = useMemo(() => {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    const vals = [120, 185, 95, 230, 178, 142, 298];
-    const max = Math.max(...vals);
-    return days.map((d, i) => ({ label: d, value: vals[i], pct: (vals[i] / max) * 100 }));
-  }, []);
+    if (!data?.dailyViews) return [];
+    const days = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const isoDate = d.toISOString().split('T')[0];
+      const shortDay = d.toLocaleDateString('en-US', { weekday: 'short' });
+      days.push({ id: isoDate, label: shortDay });
+    }
+    
+    const mapped = days.map(d => {
+      const found = data.dailyViews.find(v => v._id === d.id);
+      return { label: d.label, value: found ? found.count : 0 };
+    });
+    
+    const max = Math.max(...mapped.map(m => m.value), 1);
+    return mapped.map(m => ({ ...m, pct: (m.value / max) * 100 }));
+  }, [data]);
 
-  // Traffic sources mock data
-  const trafficSources = [
-    { name: 'Direct Link', pct: '42%', color: 'var(--purple)' },
-    { name: 'Google Search', pct: '28%', color: 'var(--blue)' },
-    { name: 'LinkedIn', pct: '18%', color: '#FF6B6B' },
-    { name: 'QR Code Scan', pct: '12%', color: '#4ade80' },
-  ];
+  // Dynamic Browsers
+  const browsers = useMemo(() => {
+    if (!data?.browserStats) return [];
+    const total = data.browserStats.reduce((acc, curr) => acc + curr.count, 0) || 1;
+    const colors = ['var(--purple)', 'var(--blue)', '#FF6B6B', '#4ade80', '#facc15'];
+    return data.browserStats.map((b, i) => ({
+      name: b._id,
+      pct: `${Math.round((b.count / total) * 100)}%`,
+      width: `${Math.round((b.count / total) * 100)}%`,
+      color: colors[i % colors.length],
+      flag: '🌐'
+    }));
+  }, [data]);
 
-  // Top countries mock data
-  const countries = [
-    { flag: '🇮🇳', name: 'India', pct: '48%', width: '90%' },
-    { flag: '🇺🇸', name: 'USA', pct: '22%', width: '50%' },
-    { flag: '🇬🇧', name: 'UK', pct: '12%', width: '28%' },
-    { flag: '🇩🇪', name: 'Germany', pct: '8%', width: '18%' },
-    { flag: '🇨🇦', name: 'Canada', pct: '6%', width: '15%' },
-    { flag: '🌍', name: 'Others', pct: '4%', width: '10%' },
-  ];
+  // Dynamic Devices
+  const devices = useMemo(() => {
+    if (!data?.deviceStats) return [];
+    const total = data.deviceStats.reduce((acc, curr) => acc + curr.count, 0) || 1;
+    const colors = ['var(--purple)', 'var(--blue)', '#4ade80'];
+    return data.deviceStats.map((d, i) => ({
+      name: d._id,
+      pct: `${Math.round((d.count / total) * 100)}%`,
+      color: colors[i % colors.length]
+    }));
+  }, [data]);
 
-  // Device types mock data
-  const devices = [
-    { name: 'Mobile', pct: '54%', color: 'var(--purple)' },
-    { name: 'Desktop', pct: '38%', color: 'var(--blue)' },
-    { name: 'Tablet', pct: '8%', color: '#4ade80' },
-  ];
-
-  const totalVisitors = data?.profileViews || 3841;
-  const uniqueVisitors = data?.qrScans ? data.profileViews - data.qrScans : 2294;
+  const totalVisitors = data?.totalViews || 0;
+  const uniqueVisitors = data?.uniqueVisitors || 0;
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '2rem' }}>
@@ -63,22 +77,22 @@ export default function AnalyticsPage() {
             <div className="metric-card">
               <div className="label">👁 Total Visitors</div>
               <div className="value">{totalVisitors.toLocaleString()}</div>
-              <div className="change">↑ 18% this month</div>
+              <div className="change" style={{ opacity: 0.6 }}>Lifetime views</div>
             </div>
             <div className="metric-card">
               <div className="label">👤 Unique Visitors</div>
               <div className="value">{uniqueVisitors.toLocaleString()}</div>
-              <div className="change">↑ 12% this month</div>
+              <div className="change" style={{ opacity: 0.6 }}>Distinct IPs</div>
             </div>
             <div className="metric-card">
-              <div className="label">🎯 Lead Conversion</div>
-              <div className="value">6.2%</div>
-              <div className="change">↑ 0.8% this month</div>
+              <div className="label">🎯 Contact Clicks</div>
+              <div className="value">{data?.contactClicks || 0}</div>
+              <div className="change" style={{ opacity: 0.6 }}>Clicks on contact info</div>
             </div>
             <div className="metric-card">
-              <div className="label">📈 Profile Score</div>
-              <div className="value">88/100</div>
-              <div className="change">↑ 3 pts this week</div>
+              <div className="label">📥 Resume Downloads</div>
+              <div className="value">{data?.resumeDownloads || 0}</div>
+              <div className="change" style={{ opacity: 0.6 }}>Total downloads</div>
             </div>
           </div>
 
@@ -96,9 +110,10 @@ export default function AnalyticsPage() {
               </div>
             </div>
             <div className="panel">
-              <h4>Traffic Sources</h4>
+              <h4>Top Browsers</h4>
               <div className="donut-wrap">
-                {trafficSources.map((s) => (
+                {browsers.length === 0 ? <div style={{ color: 'var(--muted)', fontSize: '.8rem' }}>No data yet.</div> : null}
+                {browsers.map((s) => (
                   <div className="donut-item" key={s.name}>
                     <div className="donut-dot" style={{ background: s.color }} />
                     <span className="donut-name">{s.name}</span>
@@ -109,16 +124,17 @@ export default function AnalyticsPage() {
             </div>
           </div>
 
-          {/* Chart Row 2: Top Countries + Device Types */}
+          {/* Chart Row 2: Top Browsers Bar + Device Types */}
           <div className="chart-row">
             <div className="panel">
-              <h4>Top Countries</h4>
+              <h4>Browsers Breakdown</h4>
               <div className="geo-grid">
-                {countries.map((c) => (
+                {browsers.length === 0 ? <div style={{ color: 'var(--muted)', fontSize: '.8rem' }}>No data yet.</div> : null}
+                {browsers.map((c) => (
                   <div className="geo-item" key={c.name}>
                     <span>{c.flag} {c.name}</span>
                     <div className="geo-bar-bg">
-                      <div className="geo-bar-fill" style={{ width: c.width }} />
+                      <div className="geo-bar-fill" style={{ width: c.width, background: c.color }} />
                     </div>
                     <span style={{ fontSize: '.75rem', color: 'var(--purple)' }}>{c.pct}</span>
                   </div>
@@ -128,6 +144,7 @@ export default function AnalyticsPage() {
             <div className="panel">
               <h4>Device Types</h4>
               <div className="donut-wrap">
+                {devices.length === 0 ? <div style={{ color: 'var(--muted)', fontSize: '.8rem' }}>No data yet.</div> : null}
                 {devices.map((d) => (
                   <div className="donut-item" key={d.name}>
                     <div className="donut-dot" style={{ background: d.color }} />

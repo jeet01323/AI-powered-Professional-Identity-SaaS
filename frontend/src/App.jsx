@@ -41,8 +41,11 @@ function TopNav() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Hide nav on /app/* routes (sidebar handles navigation there)
-  if (location.pathname.startsWith('/app')) {
+  // Show nav only on landing and auth routes
+  const isAuthRoute = ['/login', '/register', '/forgot-password', '/reset-password'].some(p => location.pathname.startsWith(p));
+  const isLanding = location.pathname === '/';
+
+  if (!isLanding && !isAuthRoute) {
     return null;
   }
 

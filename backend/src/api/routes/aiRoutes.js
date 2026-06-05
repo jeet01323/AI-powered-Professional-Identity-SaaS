@@ -6,30 +6,17 @@ const protect = require("../../middleware/authMiddleware");
 
 const {
   generateBio,
-
   reviewPortfolio,
-
-} = require(
-  "../controllers/aiController"
-);
-
+  askAssistant,
+} = require("../controllers/aiController");
 
 // Generate AI Bio
-router.post(
-  "/generate-bio",
-  protect,
-  generateBio
-);
-
+router.post("/generate-bio", protect, generateBio);
 
 // AI PORTFOLIO REVIEW
-router.get(
-  "/review",
+router.get("/review", protect, reviewPortfolio);
 
-  protect,
-
-  reviewPortfolio
-);
-
+// GENERIC AI CHAT
+router.post("/ask", protect, askAssistant);
 
 module.exports = router;

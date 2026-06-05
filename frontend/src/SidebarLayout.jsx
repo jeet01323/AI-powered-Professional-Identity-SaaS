@@ -1,9 +1,20 @@
 import { NavLink, Outlet } from 'react-router-dom';
 import { AuthContext } from './context/AuthContext';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
+import { api } from './lib/api';
 
 export default function SidebarLayout() {
   const { user, logout } = useContext(AuthContext);
+
+  useEffect(() => {
+    api.profile.getMe()
+      .then(res => {
+        if (res && res.theme) {
+          document.body.dataset.theme = res.theme;
+        }
+      })
+      .catch(console.error);
+  }, []);
 
   const navItems = [
     { to: '/app/dashboard', label: 'Dashboard', icon: '🏠' },

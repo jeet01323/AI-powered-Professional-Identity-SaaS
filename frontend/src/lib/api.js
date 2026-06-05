@@ -64,6 +64,7 @@ export const api = {
   ai: {
     generateBio: (payload) => request('/api/ai/generate-bio', { method: 'POST', body: payload }),
     reviewPortfolio: () => request('/api/ai/review', { method: 'GET' }),
+    ask: (payload) => request('/api/ai/ask', { method: 'POST', body: payload }),
   },
   github: {
     connect: (payload) => request('/api/github/connect', { method: 'POST', body: payload }),

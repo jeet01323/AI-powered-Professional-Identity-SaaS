@@ -161,8 +161,21 @@ Give response in clean JSON format.
 };
 
 
+// GENERIC AI ASSISTANT
+const askAssistant = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+    const result = await model.generateContent(prompt);
+    res.json({ response: result.response.text() });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 module.exports = {
   generateBio,
   reviewPortfolio,
+  askAssistant,
 };
 

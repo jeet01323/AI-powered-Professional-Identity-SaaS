@@ -22,6 +22,30 @@
   --border: rgba(108, 99, 255, 0.2);
 }
 
+[data-theme="light"] {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --card2: #f1f5f9;
+  --purple: #6C63FF;
+  --blue: #00D4FF;
+  --accent: #FF6B6B;
+  --text: #0f172a;
+  --muted: #64748b;
+  --border: rgba(108, 99, 255, 0.15);
+}
+
+[data-theme="neon"] {
+  --bg: #0f0c29;
+  --card: #1a1744;
+  --card2: #24205c;
+  --purple: #ff00ff;
+  --blue: #00ffff;
+  --accent: #00ff00;
+  --text: #ffffff;
+  --muted: #b0a8d6;
+  --border: rgba(255, 0, 255, 0.3);
+}
+
 html { scroll-behavior: smooth; }
 
 body {

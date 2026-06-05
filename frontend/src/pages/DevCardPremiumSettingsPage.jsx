@@ -17,7 +17,7 @@ function Toggle({ checked, onChange, label }) {
       alignItems: 'center',
       padding: '0.6rem 0',
       fontSize: '0.9rem',
-      color: '#F8FAFC',
+      color: 'var(--text)',
     }}>
       <span>{label}</span>
       <button
@@ -81,6 +81,7 @@ export default function DevCardPremiumSettingsPage() {
     setSavingTheme(true);
     try {
       await api.profile.updateTheme({ theme: profile.theme });
+      document.body.dataset.theme = profile.theme;
       toast.success('Appearance saved successfully!');
     } catch (err) {
       toast.error(err.message || 'Failed to save appearance');
@@ -130,12 +131,12 @@ export default function DevCardPremiumSettingsPage() {
             fontFamily: "'Syne', sans-serif",
             fontSize: '1.6rem',
             fontWeight: 800,
-            color: '#F8FAFC',
+            color: 'var(--text)',
             marginBottom: '0.25rem',
           }}>
             Account Settings
           </h1>
-          <p style={{ color: '#8892A4', fontSize: '0.9rem' }}>
+          <p style={{ color: 'var(--muted)', fontSize: '0.9rem' }}>
             Manage your profile, notifications, appearance, and security.
           </p>
         </div>
@@ -193,11 +194,11 @@ export default function DevCardPremiumSettingsPage() {
               fontWeight: 700,
               fontSize: '1rem',
               marginBottom: '0.5rem',
-              color: '#F8FAFC',
+              color: 'var(--text)',
             }}>
               Profile Settings
             </h3>
-            <p style={{ color: '#8892A4', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
+            <p style={{ color: 'var(--muted)', fontSize: '0.85rem', marginBottom: '1.5rem' }}>
               Upload your avatar, manage what's public, and keep your details up to date.
             </p>
 
@@ -225,7 +226,7 @@ export default function DevCardPremiumSettingsPage() {
                 <button className="btn-outline" style={{ fontSize: '0.8rem', padding: '0.4rem 0.9rem' }}>
                   Upload avatar
                 </button>
-                <p style={{ fontSize: '0.75rem', color: '#8892A4', marginTop: '0.4rem' }}>
+                <p style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '0.4rem' }}>
                   Recommended: 512×512 PNG/JPG
                 </p>
               </div>
@@ -275,7 +276,7 @@ export default function DevCardPremiumSettingsPage() {
               </button>
             </div>
 
-            <div style={{ fontSize: '0.75rem', color: '#8892A4', marginTop: '1rem' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '1rem' }}>
               Avatar upload and save actions are wired as placeholders—connect backend endpoints next.
             </div>
           </div>
@@ -295,12 +296,12 @@ export default function DevCardPremiumSettingsPage() {
                   fontFamily: "'Syne', sans-serif",
                   fontWeight: 700,
                   fontSize: '1rem',
-                  color: '#F8FAFC',
+                  color: 'var(--text)',
                   marginBottom: '0.25rem',
                 }}>
                   Notifications
                 </h3>
-                <p style={{ color: '#8892A4', fontSize: '0.85rem' }}>
+                <p style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
                   Choose which updates you want to receive.
                 </p>
               </div>
@@ -363,12 +364,12 @@ export default function DevCardPremiumSettingsPage() {
                   fontFamily: "'Syne', sans-serif",
                   fontWeight: 700,
                   fontSize: '1rem',
-                  color: '#F8FAFC',
+                  color: 'var(--text)',
                   marginBottom: '0.25rem',
                 }}>
                   Appearance
                 </h3>
-                <p style={{ color: '#8892A4', fontSize: '0.85rem' }}>
+                <p style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
                   Select a calm, premium look across your DevCard experience.
                 </p>
               </div>
@@ -385,7 +386,7 @@ export default function DevCardPremiumSettingsPage() {
             </div>
 
             <div style={{ marginBottom: '1.25rem' }}>
-              <div style={{ fontSize: '0.85rem', color: '#8892A4', marginBottom: '0.75rem' }}>
+              <div style={{ fontSize: '0.85rem', color: 'var(--muted)', marginBottom: '0.75rem' }}>
                 Theme selector
               </div>
               <div style={{
@@ -412,7 +413,7 @@ export default function DevCardPremiumSettingsPage() {
                       padding: '0.5rem',
                       fontSize: '0.8rem',
                       textAlign: 'center',
-                      color: profile.theme === t.id ? '#F8FAFC' : '#8892A4',
+                      color: profile.theme === t.id ? 'var(--text)' : 'var(--muted)',
                     }}>
                       {t.label} {profile.theme === t.id ? '✓' : ''}
                     </div>
@@ -423,7 +424,7 @@ export default function DevCardPremiumSettingsPage() {
 
             {/* Preview */}
             <div style={{
-              background: '#1C2340',
+              background: 'var(--card2)',
               borderRadius: '1rem',
               padding: '1.25rem',
               marginBottom: '1.5rem',
@@ -436,8 +437,8 @@ export default function DevCardPremiumSettingsPage() {
                 marginBottom: '1rem',
               }}>
                 <div>
-                  <div style={{ fontWeight: 600, fontSize: '0.9rem', color: '#F8FAFC' }}>Live preview</div>
-                  <div style={{ fontSize: '0.8rem', color: '#8892A4' }}>Theme will apply after you save.</div>
+                  <div style={{ fontWeight: 600, fontSize: '0.9rem', color: 'var(--text)' }}>Live preview</div>
+                  <div style={{ fontSize: '0.8rem', color: 'var(--muted)' }}>Theme will apply after you save.</div>
                 </div>
                 <span style={{
                   background: 'rgba(108,99,255,0.15)',
@@ -510,12 +511,12 @@ export default function DevCardPremiumSettingsPage() {
                   fontFamily: "'Syne', sans-serif",
                   fontWeight: 700,
                   fontSize: '1rem',
-                  color: '#F8FAFC',
+                  color: 'var(--text)',
                   marginBottom: '0.25rem',
                 }}>
                   Security
                 </h3>
-                <p style={{ color: '#8892A4', fontSize: '0.85rem' }}>
+                <p style={{ color: 'var(--muted)', fontSize: '0.85rem' }}>
                   Keep your account protected with strong security controls.
                 </p>
               </div>
@@ -539,7 +540,7 @@ export default function DevCardPremiumSettingsPage() {
 
             <div style={{
               fontSize: '0.8rem',
-              color: '#8892A4',
+              color: 'var(--muted)',
               padding: '0.75rem',
               background: 'rgba(108,99,255,0.08)',
               border: '1px solid rgba(108,99,255,0.15)',
@@ -572,7 +573,7 @@ export default function DevCardPremiumSettingsPage() {
                   <div style={{ fontWeight: 700, color: '#FF6B6B', marginBottom: '0.25rem' }}>
                     Delete account
                   </div>
-                  <div style={{ fontSize: '0.85rem', color: '#8892A4' }}>
+                  <div style={{ fontSize: '0.85rem', color: 'var(--muted)' }}>
                     Permanently remove your DevCard account and associated data.
                   </div>
                 </div>
@@ -612,7 +613,7 @@ export default function DevCardPremiumSettingsPage() {
                 </button>
               </div>
 
-              <div style={{ fontSize: '0.75rem', color: '#8892A4', marginTop: '1rem' }}>
+              <div style={{ fontSize: '0.75rem', color: 'var(--muted)', marginTop: '1rem' }}>
                 Delete action is disabled until backend integration is connected.
               </div>
             </div>

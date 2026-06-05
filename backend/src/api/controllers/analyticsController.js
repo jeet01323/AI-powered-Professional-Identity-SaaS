@@ -182,20 +182,66 @@ const getDashboardAnalytics =
           })
           .limit(10);
 
+      // LAST 7 DAYS VIEWS
+      const sevenDaysAgo = new Date();
+      sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+      sevenDaysAgo.setHours(0, 0, 0, 0);
+
+      const dailyViews = await Analytics.aggregate([
+        {
+          $match: {
+            profileId: profile._id,
+            eventType: "profile_view",
+            createdAt: { $gte: sevenDaysAgo }
+          }
+        },
+        {
+          $group: {
+            _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { "_id": 1 } }
+      ]);
+
+      // BROWSER STATS
+      const browserStats = await Analytics.aggregate([
+        {
+          $match: { profileId: profile._id }
+        },
+        {
+          $group: {
+            _id: { $ifNull: ["$browser", "Unknown"] },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { count: -1 } }
+      ]);
+
+      // DEVICE STATS
+      const deviceStats = await Analytics.aggregate([
+        {
+          $match: { profileId: profile._id }
+        },
+        {
+          $group: {
+            _id: { $ifNull: ["$deviceType", "Unknown"] },
+            count: { $sum: 1 }
+          }
+        },
+        { $sort: { count: -1 } }
+      ]);
 
       res.json({
         totalViews,
-
-        uniqueVisitors:
-          uniqueVisitors.length,
-
+        uniqueVisitors: uniqueVisitors.length,
         qrScans,
-
         resumeDownloads,
-
         contactClicks,
-
         recentActivity,
+        dailyViews,
+        browserStats,
+        deviceStats,
       });
 
     } catch (error) {

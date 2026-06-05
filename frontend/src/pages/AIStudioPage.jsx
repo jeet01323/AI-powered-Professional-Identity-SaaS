@@ -62,9 +62,14 @@ export default function AIStudioPage() {
         const res = await api.ai.reviewPortfolio();
         await simulateTyping("Here is my review:\n\n" + (res.review || 'No review generated.'));
       } else {
-        // Mock response for other tools
-        await new Promise(r => setTimeout(r, 800));
-        await simulateTyping(`Based on your input "${text.slice(0, 30)}...", I suggest refining your approach. Try adding more specific metrics or outcomes!`);
+        // Real response for other tools
+        const prompt = `Act as an expert career advisor.
+Context Tool: ${activeTool.title} (${activeTool.desc})
+User Input: ${text}
+Provide a helpful, short, and professional response in pure text (no markdown parsing needed on frontend, keep it plain text with newlines if necessary).`;
+        
+        const res = await api.ai.ask({ prompt });
+        await simulateTyping(res.response || 'No response generated.');
       }
     } catch (err) {
       await simulateTyping('Error generating content: ' + (err.message || 'Unknown error'));

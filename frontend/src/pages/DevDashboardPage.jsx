@@ -15,15 +15,29 @@ export default function DevDashboardPage() {
   });
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [contacts, setContacts] = useState([]);
+
+  // Helper for relative time
+  const getRelativeTime = (dateStr) => {
+    const diff = new Date() - new Date(dateStr);
+    const mins = Math.floor(diff / 60000);
+    if (mins < 60) return `${mins} min${mins !== 1 ? 's' : ''} ago`;
+    const hrs = Math.floor(mins / 60);
+    if (hrs < 24) return `${hrs} hr${hrs !== 1 ? 's' : ''} ago`;
+    const days = Math.floor(hrs / 24);
+    return `${days} day${days !== 1 ? 's' : ''} ago`;
+  };
 
   useEffect(() => {
     Promise.all([
       api.analytics.getDashboard(),
-      api.profile.getMe()
+      api.profile.getMe(),
+      api.contact.getMessages().catch(() => ({ contacts: [] }))
     ])
-      .then(([analyticsData, profileData]) => {
+      .then(([analyticsData, profileData, contactData]) => {
         if (analyticsData) setAnalytics(analyticsData);
         if (profileData) setProfile(profileData);
+        if (contactData && contactData.contacts) setContacts(contactData.contacts);
       })
       .catch(console.error)
       .finally(() => setLoading(false));
@@ -86,12 +100,15 @@ export default function DevDashboardPage() {
     { icon: '🔗', text: 'Add LinkedIn & Twitter social links', path: '/app/profile-builder' },
   ];
 
-  // Mock leads (HTML reference data)
-  const recentLeads = [
-    { initials: 'AK', name: 'Amit Kumar', time: '2 hours ago · Mumbai' },
-    { initials: 'SR', name: 'Sara Rahman', time: 'Yesterday · Bangalore' },
-    { initials: 'JM', name: 'John Miller', time: '2 days ago · London' },
-  ];
+  // Real leads from backend
+  const recentLeads = contacts.slice(0, 3).map(c => {
+    const initials = (c.name || 'D').substring(0, 2).toUpperCase();
+    return {
+      initials,
+      name: c.name,
+      time: getRelativeTime(c.createdAt)
+    };
+  });
 
   return (
     <div>
@@ -118,23 +135,23 @@ export default function DevDashboardPage() {
       <div className="metrics-grid">
         <div className="metric-card">
           <div className="label">👁️ Profile Views</div>
-          <div className="value">{(analytics.totalViews || analytics.profileViews || 0).toLocaleString()}</div>
-          <div className="change">↑ 12% this week</div>
+          <div className="value">{(analytics.totalViews || 0).toLocaleString()}</div>
+          <div className="change" style={{ opacity: 0.6 }}>Total lifetime views</div>
         </div>
         <div className="metric-card">
           <div className="label">❤️ Engagement</div>
-          <div className="value">{analytics.contactClicks || 68}%</div>
-          <div className="change">↑ 5% this week</div>
+          <div className="value">{analytics.contactClicks || 0}</div>
+          <div className="change" style={{ opacity: 0.6 }}>Clicks on contact button</div>
         </div>
         <div className="metric-card">
           <div className="label">📥 Leads</div>
-          <div className="value">{analytics.resumeDownloads || 23}</div>
-          <div className="change">↑ 3 new today</div>
+          <div className="value">{contacts.length || 0}</div>
+          <div className="change" style={{ opacity: 0.6 }}>Messages received</div>
         </div>
         <div className="metric-card">
-          <div className="label">🌍 Countries</div>
-          <div className="value">14</div>
-          <div className="change">+2 this month</div>
+          <div className="label">🌐 Browsers</div>
+          <div className="value">{analytics.browserStats?.length || 0}</div>
+          <div className="change" style={{ opacity: 0.6 }}>Unique browsers used</div>
         </div>
       </div>
 
@@ -156,15 +173,19 @@ export default function DevDashboardPage() {
         </div>
         <div className="panel">
           <h4>🧑‍💼 Recent Leads</h4>
-          {recentLeads.map((lead, i) => (
-            <div className="lead-item" key={i}>
-              <div className="lead-avatar">{lead.initials}</div>
-              <div>
-                <div className="lead-name">{lead.name}</div>
-                <div className="lead-time">{lead.time}</div>
+          {recentLeads.length === 0 ? (
+            <div style={{ color: 'var(--muted)', fontSize: '0.85rem', marginTop: '1rem' }}>No leads yet. Share your profile!</div>
+          ) : (
+            recentLeads.map((lead, i) => (
+              <div className="lead-item" key={i}>
+                <div className="lead-avatar">{lead.initials}</div>
+                <div>
+                  <div className="lead-name">{lead.name}</div>
+                  <div className="lead-time">{lead.time}</div>
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 

@@ -99,19 +99,19 @@ export default function GitHubPage() {
       <div className="metrics-grid" style={{ marginBottom: '1.5rem' }}>
         <div className="metric-card">
           <div className="label">📦 Repositories</div>
-          <div className="value">{githubData ? repoCount : 48}</div>
+          <div className="value">{githubData ? repoCount : 0}</div>
         </div>
         <div className="metric-card">
           <div className="label">⭐ Total Stars</div>
-          <div className="value">{githubData ? totalStars : 312}</div>
+          <div className="value">{githubData ? totalStars : 0}</div>
         </div>
         <div className="metric-card">
           <div className="label">🔀 Forks</div>
-          <div className="value">{githubData ? totalForks : 94}</div>
+          <div className="value">{githubData ? totalForks : 0}</div>
         </div>
         <div className="metric-card">
           <div className="label">👥 Followers</div>
-          <div className="value">{githubData ? followers : 156}</div>
+          <div className="value">{githubData ? followers : 0}</div>
         </div>
       </div>
 
